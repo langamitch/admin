@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - Submissions</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:400,500,600,700&display=swap">
+    <style>
+        :root {
+            --bg: #000;
+            --fg: #fff;
+            --border: #222;
+            --accent: #fff;
+            --accent-hover: #444;
+            --danger: #e11d48;
+            --danger-hover: #be123c;
+            --muted: #181818;
+            --muted-fg: #bbb;
+            --radius: 30px;
+            --shadow: 0 2px 12px #0008;
+            --transition: 0.18s cubic-bezier(.4,0,.2,1);
+        }
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Fira Mono', 'Menlo', 'Monaco', 'Consolas', 'Liberation Mono', 'Courier New', monospace;
+            font-size: 10px;
+            background: var(--bg);
+            color: var(--fg);
+            width: 100vw;
+            min-height: 100vh;
+            box-sizing: border-box;
+        }
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            width: 100vw;
+            height: 100vh;
+            box-sizing: border-box;
+        }
+        header {
+            background: var(--bg);
+            border-bottom: 1px solid var(--border);
+            padding: 18px 32px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100vw;
+            box-sizing: border-box;
+        }
+        .logo {
+            font-weight: 700;
+            font-size: 10px;
+            letter-spacing: 0.5px;
+            color: var(--accent);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+        .logout-btn {
+            background: #e11d48;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            padding: 10px 22px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        .logout-btn:hover { background: #be123c; }
+        .main-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            padding: 0;
+            background: var(--bg);
+            width: 100vw;
+            min-height: 0;
+            box-sizing: border-box;
+        }
+        .filters-bar {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            margin: 0 0 18px 0;
+            width: 100vw;
+            align-items: center;
+            justify-content: space-between;
+            box-sizing: border-box;
+            padding: 32px 32px 0 32px;
+        }
+        .filters-bar input, .filters-bar select {
+            background: var(--muted);
+            color: var(--fg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 10px 12px;
+            font-size: 10px;
+            outline: none;
+            transition: border var(--transition);
+        }
+        .filters-bar input:focus, .filters-bar select:focus {
+            border: 1.5px solid var(--accent);
+        }
+        .export-btn {
+            background: #2563eb;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            padding: 10px 16px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 8px;
+            transition: background var(--transition);
+            position: relative;
+        }
+        .export-btn:hover { background: #1e40af; }
+        .export-dropdown {
+            min-width: 180px;
+            background: #222;
+            border-radius: 12px;
+            box-shadow: 0 4px 16px #0003;
+            padding: 6px 0;
+            display: none;
+        }
+        .export-option:hover {
+            background: #2563eb !important;
+            color: #fff !important;
+        }
+        .table-container {
+            width: 100vw;
+            background: var(--bg);
+            box-shadow: var(--shadow);
+            overflow-x: auto;
+            box-sizing: border-box;
+            padding: 0 0x 32px 32px;
+            flex: 1;
+            min-height: 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--bg);
+            color: var(--fg);
+            border-radius: 10px;
+            overflow: hidden;
+            min-width: 1200px;
+            border: 1px solid #222;
+            box-shadow: 0 2px 8px #0002;
+        }
+        th, td {
+            padding: 10px 8px;
+            border-bottom: 1px solid var(--border);
+            font-size: 10px;
+            text-align: left;
+            transition: background 0.18s;
+        }
+        th {
+            background: var(--muted);
+            color: var(--muted-fg);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-left: 1px solid var(--border);
+            
+        }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #181818; }
+        tbody tr:nth-child(odd) td { background: #101014; }
+        tbody tr:nth-child(even) td { background: #18181c; }
+        .delete-btn {
+            background: #e11d48;
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            padding: 6px 12px;
+            font-size: 10px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        .delete-btn:hover { background: #be123c; }
+        .error-msg {
+            color: var(--danger);
+            margin-bottom: 12px;
+            text-align: center;
+            font-size: 10px;
+        }
+        .login-modal-bg {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.7); display: flex; align-items: center; justify-content: center; z-index: 1000;
+        }
+        .login-modal {
+            background: var(--bg);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 40px 32px;
+            min-width: 320px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .login-modal h2 {
+            color: var(--accent);
+            margin-bottom: 24px;
+            font-weight: 700;
+        }
+        .login-modal input {
+            width: 100%;
+            margin-bottom: 16px;
+            padding: 12px 10px;
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            font-size: 13px;
+            background: var(--muted);
+            color: var(--fg);
+        }
+        .login-modal button {
+            width: 100%;
+            padding: 12px 0;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: var(--radius);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background var(--transition);
+        }
+        .login-modal button:hover { background: var(--accent-hover); }
+        @media (max-width: 900px) { .main-container, .table-container { max-width: 98vw; } }
+        @media (max-width: 600px) { .main-container, .table-container { max-width: 100vw; } th, td { padding: 8px 4px; } }
+        th:nth-child(9), td:nth-child(9) {
+            min-width: 220px;
+            max-width: 400px;
+            width: 22%;
+            word-break: break-word;
+            white-space: pre-line;
+        }
+        .glass-bg {
+            background: linear-gradient( #000);
+            backdrop-filter: blur(34px);
+            -webkit-backdrop-filter: blur(34px);
+        }
+        .glass-login-card {
+            background: rgba(0, 0, 0, 0.708);
+            border-radius: 2px;
+        
+            padding: 48px 36px 36px 36px;
+            min-width: 340px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border: 1.5px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .glass-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #fff;
+            margin-bottom: 32px;
+            letter-spacing: 0.5px;
+            text-shadow: 0 2px 8px #0006;
+        }
+        .glass-form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+        .glass-input {
+            width: 100%;
+            padding: 14px 12px;
+            border-radius: 12px;
+            border: 1.5px solid rgba(255,255,255,0.18);
+            background: rgba(255,255,255,0.12);
+            color: #fff;
+            font-size: 1.1rem;
+            outline: none;
+            transition: border 0.2s;
+        }
+        .glass-input:focus {
+            border: 1.5px solid #a259ff;
+            background: rgba(255,255,255,0.18);
+        }
+        .glass-btn {
+            width: 100%;
+            padding: 14px 0;
+            background: #a259ff;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            cursor: pointer;
+            box-shadow: 0 2px 8px #0002;
+            transition: background 0.2s, box-shadow 0.2s;
+        }
+        .glass-btn:hover {
+            background: #7c3aed;
+            box-shadow: 0 4px 16px #0003;
+        }
+        .error-msg {
+            color: #e11d48;
+            margin-bottom: 8px;
+            text-align: center;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Admin Dashboard</div>
+        <div class="header-actions">
+            <button class="notification-icon" id="notification-icon" style="background:transparent;border:none;border-radius:50%;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background 0.2s;padding:0;position:relative;margin-right:10px;box-shadow:none;">
+                <i class="fas fa-bell" style="font-size:16px;color:#18181b;"></i>
+                <span id="notification-dot" style="display:none;position:absolute;top:6px;right:6px;width:8px;height:8px;background:#e11d48;border-radius:50%;"></span>
+            </button>
+            <div class="notification-dropdown" id="notification-dropdown" style="display:none;position:absolute;right:90px;top:60px;background:#fff;color:#111;border-radius:16px;box-shadow:0 8px 32px rgba(24,24,27,0.25);min-width:180px;padding:14px 16px 10px 16px;z-index:300;text-align:left;">
+                <div id="notification-list" style="font-size:0.95em;color:#111;">No new submissions.</div>
+            </div>
+            <button class="profile-icon" id="profile-icon" style="background:#18181b;border:none;border-radius:50%;width:44px;height:44px;display:flex;align-items:center;justify-content:center;box-shadow:0 2px 8px rgba(0,0,0,0.10);cursor:pointer;transition:background 0.2s;padding:0;">
+                <img id="profile-photo" src="https://ui-avatars.com/api/?name=User" alt="Profile" style="width:32px;height:32px;border-radius:50%;object-fit:cover;">
+            </button>
+            <div class="profile-dropdown" id="profile-dropdown" style="display:none;position:absolute;right:32px;top:70px;background:#fff;color:#111;border-radius:16px;box-shadow:0 8px 32px rgba(24,24,27,0.25);min-width:260px;padding:20px 24px 16px 24px;z-index:300;text-align:left;">
+                <div id="profile-details" style="margin-bottom:12px;">
+                    <div id="profile-name" style="font-weight:700;font-size:1.1em;margin-bottom:2px;color:#111;">User</div>
+                    <div id="profile-email" style="font-size:0.95em;color:#2563eb;margin-bottom:10px;">user@email.com</div>
+                </div>
+                <div id="profile-settings" style="margin-bottom:14px;">
+                    <label style="display:flex;align-items:center;gap:10px;font-size:1em;cursor:pointer;color:#111;">
+                        <input type="checkbox" id="write-toggle" style="accent-color:#2563eb;"> Allow writing to database
+                    </label>
+                </div>
+                <div id="profile-logtimes">
+                    <div style="font-weight:600;margin-bottom:6px;color:#111;">Logtimes</div>
+                    <ul id="logtimes-list" style="max-height:120px;overflow-y:auto;font-size:0.95em;padding-left:18px;margin:0;color:#111;"></ul>
+                </div>
+                <button id="logout-btn" style="margin-top:18px;width:100%;background:#e11d48;color:#fff;border:none;border-radius:12px;padding:10px 0;font-weight:600;font-size:1em;cursor:pointer;">Logout</button>
+            </div>
+        </div>
+    </header>
+    <div class="main-container">
+        <div class="filters-bar">
+            <input id="filter-input" type="text" placeholder="Search by name, email, student #, or message...">
+            <select id="filter-service"><option value="">All Services</option></select>
+            <input id="filter-date" type="date">
+            <div style="flex:1"></div>
+            <div class="export-dropdown-container" style="position:relative;display:inline-block;">
+                <button id="export-btn" class="export-btn">Export <span style="font-size:1.2em;">&#x25BC;</span></button>
+                <div id="export-dropdown" class="export-dropdown" style="display:none;position:absolute;right:0;top:110%;background:#222;border-radius:12px;box-shadow:0 4px 16px #0003;z-index:10;">
+                    <button class="export-option" data-type="csv" style="display:block;width:100%;background:none;border:none;color:#fff;padding:10px 24px;text-align:left;cursor:pointer;">Export as CSV</button>
+                    <button class="export-option" data-type="json" style="display:block;width:100%;background:none;border:none;color:#fff;padding:10px 24px;text-align:left;cursor:pointer;">Export as JSON</button>
+                    <button class="export-option" data-type="pdf" style="display:block;width:100%;background:none;border:none;color:#fff;padding:10px 24px;text-align:left;cursor:pointer;">Export as PDF</button>
+                </div>
+            </div>
+        </div>
+        <div class="table-container">
+            <table id="submissions-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Student #</th>
+                        <th>Email</th>
+                        <th>Service</th>
+                        <th>Budget</th>
+                        <th>Needs</th>
+                        <th>Timeline</th>
+                        <th>Call</th>
+                        <th style="min-width:220px;max-width:400px;width:22%;">Message</th>
+                        <th>Submitted At</th>
+                        <th>Delete</th>
+                    </tr>
+                </thead>
+                <tbody id="submissions-body">
+                    <!-- Data will be inserted here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+        import { getFirestore, collection, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+        import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyCpVlceZdzdxbe0kckQtkSin53xQijrtjs",
+            authDomain: "codegrid-d9bd5.firebaseapp.com",
+            projectId: "codegrid-d9bd5",
+            storageBucket: "codegrid-d9bd5.firebasestorage.app",
+            messagingSenderId: "190980241132",
+            appId: "1:190980241132:web:38d9281c43cc3e36a217c9",
+            measurementId: "G-M3Y4787QME"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Profile logic
+        const profileIcon = document.getElementById('profile-icon');
+        const profileDropdown = document.getElementById('profile-dropdown');
+        const profileName = document.getElementById('profile-name');
+        const profileEmail = document.getElementById('profile-email');
+        const profilePhoto = document.getElementById('profile-photo');
+        const writeToggle = document.getElementById('write-toggle');
+        const logtimesList = document.getElementById('logtimes-list');
+        let allowWrite = localStorage.getItem('allowWrite') === 'true';
+        let logtimes = JSON.parse(localStorage.getItem('logtimes') || '[]');
+
+        function addLog(action) {
+            const time = new Date().toLocaleString();
+            logtimes.unshift(`${time}: ${action}`);
+            if (logtimes.length > 30) logtimes = logtimes.slice(0, 30);
+            localStorage.setItem('logtimes', JSON.stringify(logtimes));
+            renderLogtimes();
+        }
+        function renderLogtimes() {
+            logtimesList.innerHTML = logtimes.map(l => `<li>${l}</li>`).join('') || '<li>No actions yet.</li>';
+        }
+        writeToggle.checked = allowWrite;
+        writeToggle.addEventListener('change', () => {
+            allowWrite = writeToggle.checked;
+            localStorage.setItem('allowWrite', allowWrite);
+            addLog(allowWrite ? 'Enabled writing to database' : 'Disabled writing to database');
+        });
+        profileIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            profileDropdown.style.display = profileDropdown.style.display === 'block' ? 'none' : 'block';
+        });
+        document.addEventListener('click', (e) => {
+            if (!profileDropdown.contains(e.target) && e.target !== profileIcon) {
+                profileDropdown.style.display = 'none';
+            }
+        });
+        onAuthStateChanged(auth, user => {
+            if (!user) {
+                window.location.href = 'login.html';
+            } else {
+                profileName.textContent = user.displayName || 'No Name';
+                profileEmail.textContent = user.email;
+                profilePhoto.src = user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(user.displayName||'User')}`;
+                addLog('Logged in');
+            }
+        });
+        renderLogtimes();
+
+        const submissionsBody = document.getElementById('submissions-body');
+        const filterInput = document.getElementById('filter-input');
+        const filterService = document.getElementById('filter-service');
+        const filterDate = document.getElementById('filter-date');
+        const exportBtn = document.getElementById('export-btn');
+        const exportDropdown = document.getElementById('export-dropdown');
+
+        let allSubmissions = [];
+        let filteredSubmissions = [];
+        let docIds = [];
+
+        async function loadSubmissions() {
+            submissionsBody.innerHTML = '<tr><td colspan="11">Loading...</td></tr>';
+            try {
+                const querySnapshot = await getDocs(collection(db, 'form-submissions'));
+                allSubmissions = [];
+                docIds = [];
+                querySnapshot.forEach(docSnap => {
+                    const d = docSnap.data();
+                    allSubmissions.push({
+                        name: d.name || '',
+                        studentNumber: d.studentNumber || '',
+                        email: d.email || '',
+                        service: d.service || '',
+                        budget: d.budget || '',
+                        needs: (d.needs || []).join(', '),
+                        timeline: d.timeline || '',
+                        call: d.call || '',
+                        message: d.message || '',
+                        submittedAt: d.submittedAt && d.submittedAt.toDate ? d.submittedAt.toDate() : '',
+                    });
+                    docIds.push(docSnap.id);
+                });
+                filteredSubmissions = allSubmissions;
+                renderTable();
+                populateServiceFilter();
+                checkNotifications();
+            } catch (err) {
+                submissionsBody.innerHTML = `<tr><td colspan="11">Error loading submissions: ${err.message}</td></tr>`;
+            }
+        }
+
+        function renderTable() {
+            let rows = '';
+            filteredSubmissions.forEach((d, i) => {
+                rows += `<tr>
+                    <td>${d.name}</td>
+                    <td>${d.studentNumber}</td>
+                    <td>${d.email}</td>
+                    <td>${d.service}</td>
+                    <td>${d.budget}</td>
+                    <td>${d.needs}</td>
+                    <td>${d.timeline}</td>
+                    <td>${d.call}</td>
+                    <td>${d.message}</td>
+                    <td>${d.submittedAt ? d.submittedAt.toLocaleString() : ''}</td>
+                    <td><button class='delete-btn' data-index='${i}'>Delete</button></td>
+                </tr>`;
+            });
+            submissionsBody.innerHTML = rows || '<tr><td colspan="11">No submissions found.</td></tr>';
+            document.querySelectorAll('.delete-btn').forEach(btn => {
+                btn.onclick = async function() {
+                    const idx = this.getAttribute('data-index');
+                    if (confirm('Are you sure you want to delete this submission?')) {
+                        await deleteDoc(doc(db, 'form-submissions', docIds[idx]));
+                        addLog('Deleted a submission');
+                        loadSubmissions();
+                    }
+                };
+            });
+        }
+
+        function populateServiceFilter() {
+            const services = Array.from(new Set(allSubmissions.map(d => d.service))).filter(Boolean);
+            filterService.innerHTML = '<option value="">All Services</option>' + services.map(s => `<option value="${s}">${s}</option>`).join('');
+        }
+
+        function applyFilters() {
+            const text = filterInput.value.toLowerCase();
+            const service = filterService.value;
+            const date = filterDate.value;
+            filteredSubmissions = allSubmissions.filter(d => {
+                const matchesText =
+                    d.name.toLowerCase().includes(text) ||
+                    d.email.toLowerCase().includes(text) ||
+                    d.studentNumber.toLowerCase().includes(text) ||
+                    d.message.toLowerCase().includes(text);
+                const matchesService = !service || d.service === service;
+                const matchesDate = !date || (d.submittedAt && d.submittedAt.toISOString().slice(0, 10) === date);
+                return matchesText && matchesService && matchesDate;
+            });
+            renderTable();
+        }
+        filterInput.addEventListener('input', applyFilters);
+        filterService.addEventListener('change', applyFilters);
+        filterDate.addEventListener('change', applyFilters);
+
+        document.addEventListener('click', (e) => {
+            if (exportBtn.contains(e.target)) {
+                exportDropdown.style.display = exportDropdown.style.display === 'block' ? 'none' : 'block';
+            } else if (!exportDropdown.contains(e.target)) {
+                exportDropdown.style.display = 'none';
+            }
+        });
+        exportDropdown.querySelectorAll('.export-option').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                exportDropdown.style.display = 'none';
+                const type = btn.getAttribute('data-type');
+                if (type === 'csv') {
+                    exportCSV();
+                } else if (type === 'json') {
+                    exportJSON();
+                } else if (type === 'pdf') {
+                    exportPDF();
+                }
+            });
+        });
+
+        function exportCSV() {
+            const csvRows = [
+                ['Name','Student #','Email','Service','Budget','Needs','Timeline','Call','Message','Submitted At'],
+                ...filteredSubmissions.map(d => [
+                    d.name, d.studentNumber, d.email, d.service, d.budget, d.needs, d.timeline, d.call, d.message, d.submittedAt ? d.submittedAt.toLocaleString() : ''
+                ])
+            ];
+            const csvContent = csvRows.map(e => e.map(x => '"' + (x || '').replace(/"/g, '""') + '"').join(",")).join("\n");
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'submissions.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+            addLog('Exported as CSV');
+        }
+
+        function exportJSON() {
+            const jsonContent = JSON.stringify(filteredSubmissions, null, 2);
+            const blob = new Blob([jsonContent], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'submissions.json';
+            a.click();
+            URL.revokeObjectURL(url);
+            addLog('Exported as JSON');
+        }
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let y = 10;
+            doc.setFont('Inter', 'normal');
+            doc.setFontSize(10);
+            doc.text('Submissions', 10, y);
+            y += 8;
+            const headers = ['Name','Student #','Email','Service','Budget','Needs','Timeline','Call','Message','Submitted At'];
+            doc.setFontSize(8);
+            doc.text(headers.join(' | '), 10, y);
+            y += 6;
+            filteredSubmissions.forEach(d => {
+                const row = [d.name, d.studentNumber, d.email, d.service, d.budget, d.needs, d.timeline, d.call, d.message, d.submittedAt ? d.submittedAt.toLocaleString() : ''].join(' | ');
+                doc.text(row, 10, y);
+                y += 6;
+                if (y > 280) { doc.addPage(); y = 10; }
+            });
+            doc.save('submissions.pdf');
+            addLog('Exported as PDF');
+        }
+
+        const logoutBtn = document.getElementById('logout-btn');
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', async () => {
+                await auth.signOut();
+                addLog('Logged out');
+            });
+        }
+
+        const notificationIcon = document.getElementById('notification-icon');
+        const notificationDot = document.getElementById('notification-dot');
+        const notificationDropdown = document.getElementById('notification-dropdown');
+        const notificationList = document.getElementById('notification-list');
+        let lastChecked = localStorage.getItem('lastCheckedSubmissionTime');
+        let newSubmissions = [];
+
+        function checkNotifications() {
+            if (!allSubmissions.length) {
+                notificationDot.style.display = 'none';
+                notificationList.innerHTML = 'No new submissions.';
+                return;
+            }
+            const latest = allSubmissions.reduce((max, s) => {
+                const t = s.submittedAt instanceof Date ? s.submittedAt.getTime() : 0;
+                return t > max ? t : max;
+            }, 0);
+            if (!lastChecked || latest > Number(lastChecked)) {
+                // Find new submissions
+                newSubmissions = allSubmissions.filter(s => {
+                    const t = s.submittedAt instanceof Date ? s.submittedAt.getTime() : 0;
+                    return !lastChecked || t > Number(lastChecked);
+                });
+                if (newSubmissions.length > 0) {
+                    notificationDot.style.display = 'block';
+                    notificationList.innerHTML = `<b>${newSubmissions.length} new submission(s):</b><ul style='margin:8px 0 0 0;padding-left:18px;'>` +
+                        newSubmissions.map(s => `<li>${s.name || 'Unknown'} (${s.email || ''})</li>`).join('') + '</ul>';
+                } else {
+                    notificationDot.style.display = 'none';
+                    notificationList.innerHTML = 'No new submissions.';
+                }
+            } else {
+                notificationDot.style.display = 'none';
+                notificationList.innerHTML = 'No new submissions.';
+            }
+        }
+        notificationIcon.addEventListener('click', (e) => {
+            e.stopPropagation();
+            notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+            if (notificationDropdown.style.display === 'block') {
+                // Mark as read
+                if (allSubmissions.length) {
+                    const latest = allSubmissions.reduce((max, s) => {
+                        const t = s.submittedAt instanceof Date ? s.submittedAt.getTime() : 0;
+                        return t > max ? t : max;
+                    }, 0);
+                    localStorage.setItem('lastCheckedSubmissionTime', latest);
+                    lastChecked = latest;
+                    setTimeout(checkNotifications, 200); // update dot after marking as read
+                }
+            }
+        });
+        document.addEventListener('click', (e) => {
+            if (!notificationDropdown.contains(e.target) && e.target !== notificationIcon) {
+                notificationDropdown.style.display = 'none';
+            }
+        });
+
+        // Load data on page load
+        loadSubmissions();
+    </script>
+</body>
+</html>
