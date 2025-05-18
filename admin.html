@@ -241,8 +241,8 @@
         @media (max-width: 900px) { .main-container, .table-container { max-width: 98vw; } }
         @media (max-width: 600px) { .main-container, .table-container { max-width: 100vw; } th, td { padding: 8px 4px; } }
         th:nth-child(1), td:nth-child(1) { width: 120px; } /* Name */
-        th:nth-child(2), td:nth-child(2) { width: 120px; } /* Student Number */
-        th:nth-child(3), td:nth-child(3) { width: 100px; } /* Year */
+        th:nth-child(2), td:nth-child(2) { width: 10px; } /* Student Number */
+        th:nth-child(3), td:nth-child(3) { width: 150px; } /* Year */
         th:nth-child(4), td:nth-child(4) { width: 150px; } /* Course */
         th:nth-child(5), td:nth-child(5) { width: 200px; } /* Problems */
         th:nth-child(6), td:nth-child(6) { width: 150px; } /* Access Difficulties */
@@ -323,6 +323,9 @@
             margin-bottom: 8px;
             text-align: center;
             font-size: 1rem;
+        }
+        .long-content {
+            min-width: 250px;
         }
     </style>
 </head>
