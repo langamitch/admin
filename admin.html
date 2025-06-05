@@ -666,36 +666,36 @@
             //const doc = new jsPDF();
             //let y = 10;
             //doc.setFont('Inter', 'normal');
-            doc.setFontSize(10);
-            doc.text('Responses', 10, y);
-            y += 8;
-            const headers = ['Name', 'Student Number', 'Year', 'Course', 'Problems', 'Access Difficulties', 'Difficulty Causes', 'Smartphone Usage', 'App Help', 'App Help Details', 'Digital Tasks', 'Testing Willingness', 'Suggestions'];
-            doc.setFontSize(8);
-            doc.text(headers.join(' | '), 10, y);
-            y += 6;
+            //doc.setFontSize(10);
+            //doc.text('Responses', 10, y);
+            //y += 8;
+            //const headers = ['Name', 'Student Number', 'Year', 'Course', 'Problems', 'Access Difficulties', 'Difficulty Causes', 'Smartphone Usage', 'App Help', 'App Help Details', 'Digital Tasks', 'Testing Willingness', 'Suggestions'];
+            //doc.setFontSize(8);
+            //doc.text(headers.join(' | '), 10, y);
+            //y += 6;
             //filteredSubmissions.forEach(d => {
                 //const row = [
-                    d.name || '-',
-                    d.studentNumber || '-',
-                    d.year || '-',
-                    d.course || '-',
-                    d.problems || '-',
-                    d.accessDifficulties?.join(', ') || '-',
-                    d.difficultyCauses?.join(', ') || '-',
-                    d.smartphoneUsage || '-',
-                    d.appHelp || '-',
-                    d.appHelpDetails || '-',
-                    d.digitalTasks || '-',
-                    d.testingWillingness || '-',
+                    //d.name || '-',
+                    //d.studentNumber || '-',
+                    //d.year || '-',
+                    //d.course || '-',
+                    //d.problems || '-',
+                    //d.accessDifficulties?.join(', ') || '-',
+                    //d.difficultyCauses?.join(', ') || '-',
+                    //d.smartphoneUsage || '-',
+                    //d.appHelp || '-',
+                    //d.appHelpDetails || '-',
+                    //d.digitalTasks || '-',
+                    //d.testingWillingness || '-',
                     //d.suggestions || '-'
              //   ].join(' | ');
-                doc.text(row, 10, y);
-                y += 6;
+                //doc.text(row, 10, y);
+                //y += 6;
                 //if (y > 280) { doc.addPage(); y = 10; }
-            });
-            doc.save('responses.pdf');
+          //  });
+            //doc.save('responses.pdf');
             //addLog('Exported as PDF');
-        }
+        //}
 
         const logoutBtn = document.getElementById('logout-btn');
         if (logoutBtn) {
