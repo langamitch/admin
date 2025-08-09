@@ -383,18 +383,18 @@
                     <tr>
                         <th>Name</th>
                         <th>Student Number</th>
-                        <th>Year</th>
+                       <!-- <th>Year</th>-->
                         <th>Course</th>
                         <th>Problems</th>
                         <th>Access Difficulties</th>
                         <th>Difficulty Causes</th>
                         <th>Smartphone Usage</th>
-                        <th>App Help</th>
+                        <!--<th>App Help</th>-->
                         <th>App Help Details</th>
                         <th>Digital Tasks</th>
                         <th>Testing Willingness</th>
                         <th>Suggestions</th>
-                        <th>Actions</th>
+                        <!--<th>Actions</th>-->
                     </tr>
                 </thead>
                 <tbody id="responses-body">
@@ -501,26 +501,21 @@
             }
         }
 
-        function renderTable() {
-            let rows = '';
-            filteredSubmissions.forEach((d, i) => {
-                rows += `<tr>
+function renderTable() {
+    let rows = '';
+        filteredSubmissions.forEach((d, i) => {
+               rows += `<tr>
                     <td>${d.name || '-'}</td>
-                    <td>${d.studentNumber || '-'}</td>
-                    <td>${d.year || '-'}</td>
+                   <td>${d.studentNumber || '-'}</td>
                     <td>${d.course}${d.courseOther ? ` (${d.courseOther})` : ''}</td>
                     <td class="long-content">${d.problems || '-'}</td>
                     <td>${d.accessDifficulties?.join(', ') || '-'}</td>
                     <td>${d.difficultyCauses?.join(', ') || '-'}</td>
                     <td>${d.smartphoneUsage || '-'}</td>
-                    <td>${d.appHelp || '-'}</td>
                     <td class="long-content">${d.appHelpDetails || '-'}</td>
                     <td class="long-content">${d.digitalTasks || '-'}</td>
                     <td>${d.testingWillingness || '-'}</td>
                     <td class="long-content">${d.suggestions || '-'}</td>
-                    <td>
-                        <button class="delete-btn" data-index="${i}">Delete</button>
-                    </td>
                 </tr>`;
             });
             submissionsBody.innerHTML = rows || '<tr><td colspan="14">No responses found.</td></tr>';
